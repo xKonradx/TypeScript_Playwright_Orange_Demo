@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator } from "@playwright/test";
 
 export class LoginPage {
   readonly page: Page;
@@ -8,13 +8,13 @@ export class LoginPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.username = page.getByPlaceholder('Username');
-    this.password = page.getByPlaceholder('Password');
-    this.loginButton = page.getByRole('button', { name: 'Login' });
+    this.username = page.getByPlaceholder("Username");
+    this.password = page.getByPlaceholder("Password");
+    this.loginButton = page.getByRole("button", { name: "Login" });
   }
 
   async goto() {
-    await this.page.goto('https://opensource-demo.orangehrmlive.com/');
+    await this.page.goto("https://opensource-demo.orangehrmlive.com/");
   }
 
   async login(user: string, pass: string) {

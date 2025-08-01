@@ -1,0 +1,13 @@
+name: Lint
+on: [pull_request]
+jobs:
+  eslint:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm ci # or yarn install
+      - uses: Maggi64/eslint-plus-action@master

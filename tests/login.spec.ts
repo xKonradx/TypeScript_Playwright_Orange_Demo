@@ -1,9 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
 import { DashboardPage } from '../pages/DashboardPage';
+import { ForgotPasswordPage } from '../pages/ForgotPasswordPage';
 
 test('TC_LOGIN_001: Valid Login redirects to dashboard', {
-    tag: ["@login", "@smoke"]
+    tag: ['@login', '@happypath']
 }, async ({ page }) => {
     // Arrange - setup Page Object instances
     const loginPage = new LoginPage(page);
@@ -21,7 +22,7 @@ test('TC_LOGIN_001: Valid Login redirects to dashboard', {
 });
 
 test ('TC_LOGIN_002: Invalid Username, "Invalid credentials" is displayed', {
-  tag: ["@login", "@negative"]
+  tag: ['@login', '@negative']
 }, async ({ page }) => {
     // Arrange - setup Page object instance
     const loginPage = new LoginPage(page);
@@ -34,5 +35,23 @@ test ('TC_LOGIN_002: Invalid Username, "Invalid credentials" is displayed', {
 
     // Assert - verify "Invalid credentials" is displayed
     await loginPage.verifyInvalidCredentialsError()
+  }
+);
+
+test ('TC_LOGIN_003: Forgot Password Link', {
+  tag: ['@login', '@happypath']
+}, async ({ page }) => {
+    // Arrange - setup Page object instance
+    const loginPage = new LoginPage(page);
+    const forgotPasswordPage = new ForgotPasswordPage(page);
+
+    //ACT - Navigate to login page and click on forgot password link
+    await loginPage.goto();
+    await loginPage.forgotPasswordLink.click();
+
+
+    // Assert - verify that the Reset Password page is displayed
+
+    await forgotPasswordPage.verifyPageIsDisplayed();
   }
 );

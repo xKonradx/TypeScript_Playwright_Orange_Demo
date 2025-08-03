@@ -10,6 +10,7 @@ export class LoginPage {
     readonly password: Locator;
     readonly loginButton: Locator;
     readonly errorMessage: Locator;
+    readonly forgotPasswordLink: Locator;
 
     /**
      * Creates new LoginPage instance
@@ -25,6 +26,8 @@ export class LoginPage {
         this.loginButton = page.getByRole('button', { name: 'Login' });
         // Locate error message for invalid credentials
         this.errorMessage = page.locator('text=/invalid.*credentials/i');
+        // Locate forgot password link 
+        this.forgotPasswordLink = page.getByText('Forgot your password?')
     }
 
     /**
@@ -56,4 +59,14 @@ export class LoginPage {
     async verifyInvalidCredentialsError(): Promise<void> {
         await this.errorMessage.waitFor({ state: 'visible' });
     }
+
+    /**
+ * Clicks the "Forgot Password" link and waits for the modal/page to load
+ * Handles the transition from login page to password reset functionality
+ * Includes proper waiting strategies to ensure modal is fully loaded
+ */
+async clickForgotPassword(): Promise<void> {
+    // Click the forgot password link using Playwright's auto-waiting
+    await this.forgotPasswordLink.click();
+}
 }

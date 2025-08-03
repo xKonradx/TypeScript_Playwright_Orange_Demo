@@ -24,7 +24,7 @@ export class LoginPage {
         // Locate login button by role and name
         this.loginButton = page.getByRole('button', { name: 'Login' });
         // Locate error message for invalid credentials
-        this.errorMessage = page.getByText('Invalid credentials');
+        this.errorMessage = page.locator('text=/invalid.*credentials/i');
     }
 
     /**

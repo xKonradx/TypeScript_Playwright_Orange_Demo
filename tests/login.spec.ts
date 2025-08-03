@@ -20,6 +20,19 @@ test('TC_LOGIN_001: Valid Login redirects to dashboard', {
     await expect(dashboardPage.dashboardHeading).toBeVisible();
 });
 
+test ('TC_LOGIN_002: Invalid Username, "Invalid credentials" is displayed', {
+  tag: ["@login", "@negative"]
+}, async ({ page }) => {
+    // Arrange - setup Page object instance
+    const loginPage = new LoginPage(page);
+    const dashboardPage = new DashboardPage(page);
+
+    //Act - perform Login action with invalid credentials
+    await loginPage.goto();
+    await loginPage.login('InvalidUser', 'admin123');
 
 
-
+    // Assert - verify "Invalid credentials" is displayed
+    await loginPage.verifyInvalidCredentialsError()
+  }
+);

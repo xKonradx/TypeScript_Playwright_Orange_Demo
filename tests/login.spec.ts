@@ -1,46 +1,30 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage';
-import { DashboardPage } from '../pages/DashboardPage';
-import { ForgotPasswordPage } from '../pages/ForgotPasswordPage';
-
-const TEST_USERS = {
-    VALID: { username: 'Admin', password: 'admin123' },
-    INVALID: { username: 'InvalidUser', password: 'admin123' }
-} as const;
+import { test, expect } from './fixtures'
 
 test.describe('Login Functionality', {
     tag: ['@login', '@critical']
 }, () => {
     test('TC_LOGIN_001: Valid Login redirects to dashboard', {
         tag: ['@smoke']
-    }, async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        const dashboardPage = new DashboardPage(page);
-        
+    }, async ({ loginPage, dashboardPage, validUser }) => {
         await loginPage.goto();
-        await loginPage.login(TEST_USERS.VALID.username, TEST_USERS.VALID.password);
+        await loginPage.login(validUser.username, validUser.password);
         
-        await expect(page).toHaveURL(/dashboard/, { timeout: 10000 });
+        await expect(loginPage.page).toHaveURL(/dashboard/, { timeout: 10000 });
         await expect(dashboardPage.dashboardHeading).toBeVisible();
     });
 
     test('TC_LOGIN_002: Invalid Username, "Invalid credentials" is displayed', {
         tag: ['@negative']
-    }, async ({ page }) => {
-        const loginPage = new LoginPage(page);
-
+    }, async ({ loginPage, invalidUser }) => {
         await loginPage.goto();
-        await loginPage.login(TEST_USERS.INVALID.username, TEST_USERS.INVALID.password);
+        await loginPage.login(invalidUser.username, invalidUser.password);
 
         await expect(loginPage.errorMessage).toBeVisible({ timeout: 5000 });
     });
 
     test('TC_LOGIN_003: Forgot Password Link', {
         tag: ['@navigation']
-    }, async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        const forgotPasswordPage = new ForgotPasswordPage(page);
-
+    }, async ({ loginPage, forgotPasswordPage }) => {
         await loginPage.goto();
         await loginPage.clickForgotPassword();
 

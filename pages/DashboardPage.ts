@@ -1,49 +1,60 @@
 import { Page, Locator } from '@playwright/test';
+import { BasePage } from './BasePage';
 
-/**
- * Page Object Model for Dashboard page
- * Handles all interactions and verifications related to the Dashboard
- */
-export class DashboardPage {
-    readonly page: Page;
+export class DashboardPage extends BasePage {
     readonly dashboardHeading: Locator;
+    readonly adminMenu: Locator;
+    readonly pimMenu: Locator;
+    readonly leaveMenu: Locator;
+    readonly timeMenu: Locator;
+    readonly recruitmentMenu: Locator;
+    readonly myInfoMenu: Locator;
+    readonly performanceMenu: Locator;
+    readonly directoryMenu: Locator;
+    readonly maintenanceMenu: Locator;
+    readonly buzzMenu: Locator;
+    readonly userDropdown: Locator;
+    readonly logoutButton: Locator;
 
-    /**
-     * Creates new DashboardPage instance
-     * param page - Playwright Page object representing browser tab
-     */
     constructor(page: Page) {
-        this.page = page;
-        // Locate the main Dashboard heading element
-        this.dashboardHeading = page.getByRole('heading', { name: 'Dashboard' });
+        super(page);
+        this.dashboardHeading = this.getHeading('Dashboard');
+        this.adminMenu = page.getByRole('menuitem', { name: 'Admin' });
+        this.pimMenu = page.getByRole('menuitem', { name: 'PIM' });
+        this.leaveMenu = page.getByRole('menuitem', { name: 'Leave' });
+        this.timeMenu = page.getByRole('menuitem', { name: 'Time' });
+        this.recruitmentMenu = page.getByRole('menuitem', { name: 'Recruitment' });
+        this.myInfoMenu = page.getByRole('menuitem', { name: 'My Info' });
+        this.performanceMenu = page.getByRole('menuitem', { name: 'Performance' });
+        this.directoryMenu = page.getByRole('menuitem', { name: 'Directory' });
+        this.maintenanceMenu = page.getByRole('menuitem', { name: 'Maintenance' });
+        this.buzzMenu = page.getByRole('menuitem', { name: 'Buzz' });
+        this.userDropdown = page.locator('.oxd-userdropdown');
+        this.logoutButton = page.getByText('Logout');
     }
 
-    /**
-     * Waits for Dashboard heading to become visible
-     * Uses default Playwright timeout (30 seconds)
-     * throws Error if element doesn't appear within timeout
-     */
+    async goto(): Promise<void> {
+        await this.navigateToPath(BasePage.PATHS.DASHBOARD);
+    }
+
     async waitForDashboard(): Promise<void> {
         await this.dashboardHeading.waitFor({ state: 'visible' });
     }
 
-    /**
-     * Verifies that current URL contains 'dashboard'
-     * Waits for URL change with default timeout
-     * throws Error if URL doesn't match within timeout
-     */
-    async verifyDashboardUrl(): Promise<void> {
-        await this.page.waitForURL(/dashboard/);
+    async clickAdminMenu(): Promise<void> {
+        await this.adminMenu.click();
     }
 
-    /**
-     * Complete verification that Dashboard page loaded successfully
-     * Combines URL verification and element visibility check
-     * Recommended method for post-login verification
-     * throws Error if either URL or element verification fails
-     */
-    async verifyFullDashboardLoad(): Promise<void> {
-        await this.verifyDashboardUrl();  // First verify URL navigation
-        await this.waitForDashboard();    // Then verify page content loaded
+    async clickPimMenu(): Promise<void> {
+        await this.pimMenu.click();
+    }
+
+    async clickLeaveMenu(): Promise<void> {
+        await this.leaveMenu.click();
+    }
+
+    async logout(): Promise<void> {
+        await this.userDropdown.click();
+        await this.logoutButton.click();
     }
 }

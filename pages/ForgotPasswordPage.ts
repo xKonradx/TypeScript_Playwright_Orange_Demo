@@ -11,14 +11,14 @@ export class ForgotPasswordPage extends BasePage {
     constructor(page: Page) {
         super(page);
         this.pageHeading = this.getHeading(/reset password/i);
-        this.instructionText = page.getByText(/please enter your username to identify/i);
+        this.instructionText = this.getText(/please enter your username to identify/i);
         this.usernameField = this.getTextInput(/username/i);
         this.cancelButton = this.getButton(/cancel/i);
         this.resetPasswordButton = this.getButton(/reset password/i);
     }
 
     async goto(): Promise<void> {
-        await this.navigateToPath(BasePage.PATHS.FORGOT_PASSWORD);
+        await this.navigateToPath(this.PATHS.FORGOT_PASSWORD);
     }
 
     async fillUsername(username: string): Promise<void> {

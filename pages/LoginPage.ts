@@ -7,18 +7,24 @@ export class LoginPage extends BasePage {
     readonly loginButton: Locator;
     readonly errorMessage: Locator;
     readonly forgotPasswordLink: Locator;
+    readonly usernameRequiredMessage: Locator;
+    readonly passwordRequiredMessage: Locator;
+    readonly singleRequiredMessage: Locator;
 
     constructor(page: Page) {
         super(page);
-        this.username = page.getByPlaceholder('Username');
-        this.password = page.getByPlaceholder('Password');
+        this.username = this.page.getByPlaceholder('Username');
+        this.password = this.page.getByPlaceholder('Password');
         this.loginButton = this.getButton('Login');
-        this.errorMessage = page.locator('text=/invalid.*credentials/i');
-        this.forgotPasswordLink = page.getByText('Forgot your password?');
+        this.errorMessage = this.page.locator('text=/invalid.*credentials/i');
+        this.forgotPasswordLink = this.getText('Forgot your password?');
+        this.usernameRequiredMessage = this.getText('Required').first();
+        this.passwordRequiredMessage = this.getText('Required').nth(1);
+        this.singleRequiredMessage = this.getText('Required');
     }
 
     async goto(): Promise<void> {
-        await this.navigateToPath(BasePage.PATHS.LOGIN);
+        await this.navigateToPath(this.PATHS.LOGIN);
     }
 
     async login(user: string, pass: string): Promise<void> {

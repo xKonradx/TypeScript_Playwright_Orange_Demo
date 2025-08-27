@@ -19,22 +19,22 @@ export class DashboardPage extends BasePage {
     constructor(page: Page) {
         super(page);
         this.dashboardHeading = this.getHeading('Dashboard');
-        this.adminMenu = page.getByRole('menuitem', { name: 'Admin' });
-        this.pimMenu = page.getByRole('menuitem', { name: 'PIM' });
-        this.leaveMenu = page.getByRole('menuitem', { name: 'Leave' });
-        this.timeMenu = page.getByRole('menuitem', { name: 'Time' });
-        this.recruitmentMenu = page.getByRole('menuitem', { name: 'Recruitment' });
-        this.myInfoMenu = page.getByRole('menuitem', { name: 'My Info' });
-        this.performanceMenu = page.getByRole('menuitem', { name: 'Performance' });
-        this.directoryMenu = page.getByRole('menuitem', { name: 'Directory' });
-        this.maintenanceMenu = page.getByRole('menuitem', { name: 'Maintenance' });
-        this.buzzMenu = page.getByRole('menuitem', { name: 'Buzz' });
-        this.userDropdown = page.locator('.oxd-userdropdown');
-        this.logoutButton = page.getByText('Logout');
+        this.adminMenu = this.getMenuItem('Admin');
+        this.pimMenu = this.getMenuItem('PIM');
+        this.leaveMenu = this.getMenuItem('Leave');
+        this.timeMenu = this.getMenuItem('Time');
+        this.recruitmentMenu = this.getMenuItem('Recruitment');
+        this.myInfoMenu = this.getMenuItem('My Info');
+        this.performanceMenu = this.getMenuItem('Performance');
+        this.directoryMenu = this.getMenuItem('Directory');
+        this.maintenanceMenu = this.getMenuItem('Maintenance');
+        this.buzzMenu = this.getMenuItem('Buzz');
+        this.userDropdown = this.page.locator('.oxd-userdropdown');
+        this.logoutButton = this.getText('Logout');
     }
 
     async goto(): Promise<void> {
-        await this.navigateToPath(BasePage.PATHS.DASHBOARD);
+        await this.navigateToPath(this.PATHS.DASHBOARD);
     }
 
     async waitForDashboard(): Promise<void> {

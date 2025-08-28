@@ -7,6 +7,7 @@ export class ForgotPasswordPage extends BasePage {
     readonly cancelButton: Locator;
     readonly resetPasswordButton: Locator;
     readonly instructionText: Locator;
+    readonly successMessage: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -15,6 +16,7 @@ export class ForgotPasswordPage extends BasePage {
         this.usernameField = this.getTextInput(/username/i);
         this.cancelButton = this.getButton(/cancel/i);
         this.resetPasswordButton = this.getButton(/reset password/i);
+        this.successMessage = this.getHeading(/reset password link sent/i);
     }
 
     async goto(): Promise<void> {

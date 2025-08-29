@@ -1,39 +1,63 @@
-import { Page, Locator } from '@playwright/test';
-import { BasePage } from './BasePage';
+import { Page, Locator } from "@playwright/test";
+import { BasePage } from "./BasePage";
 
 export class ForgotPasswordPage extends BasePage {
-    readonly pageHeading: Locator;
-    readonly usernameField: Locator;
-    readonly cancelButton: Locator;
-    readonly resetPasswordButton: Locator;
-    readonly instructionText: Locator;
-    readonly successMessage: Locator;
+  readonly pageHeading: Locator;
+  readonly usernameField: Locator;
+  readonly cancelButton: Locator;
+  readonly resetPasswordButton: Locator;
+  readonly instructionText: Locator;
+  readonly successMessage: Locator;
 
-    constructor(page: Page) {
-        super(page);
-        this.pageHeading = this.getHeading(/reset password/i);
-        this.instructionText = this.getText(/please enter your username to identify/i);
-        this.usernameField = this.getTextInput(/username/i);
-        this.cancelButton = this.getButton(/cancel/i);
-        this.resetPasswordButton = this.getButton(/reset password/i);
-        this.successMessage = this.getHeading(/reset password link sent/i);
-    }
+  /**
+   * Creates new ForgotPasswordPage instance
+   * param page - Playwright Page object representing browser tab
+   */
+  constructor(page: Page) {
+    super(page);
 
-    async goto(): Promise<void> {
-        await this.navigateToPath(this.PATHS.FORGOT_PASSWORD);
-    }
+    // Locate main heading using semantic role - most stable approach
+    this.pageHeading = page.getByRole("heading", { name: /reset password/i });
 
-    async fillUsername(username: string): Promise<void> {
-        await this.usernameField.fill(username);
-    }
+    // Locate instruction text using partial text match with regex for flexibility
+    this.instructionText = page.getByText(/please enter your username to identify/i);
 
-    async clickResetPassword(): Promise<void> {
-        await this.resetPasswordButton.click();
-        await this.waitForNetworkIdle();
-    }
+    // Locate username field using multiple fallback strategies for maximum reliability
+    this.usernameField = page
+      .getByRole("textbox", { name: /username/i })
+      .or(page.getByPlaceholder(/username/i))
+      .or(page.locator('input[type="text"]'));
 
-    async clickCancel(): Promise<void> {
-        await this.cancelButton.click();
-        await this.waitForNetworkIdle();
-    }
+    // Locate cancel button using semantic role with case-insensitive text matching
+    this.cancelButton = page.getByRole("button", { name: /cancel/i });
+
+    // Locate reset password button using semantic role with regex pattern
+    this.resetPasswordButton = page.getByRole("button", { name: /reset password/i });
+  }
+
+  async goto(): Promise<void> {
+    await this.navigateToPath(this.PATHS.FORGOT_PASSWORD);
+  }
+
+  async fillUsername(username: string): Promise<void> {
+    await this.usernameField.fill(username);
+  }
+
+  /**
+   * Clicks the reset password button and waits for network requests to complete
+   * Handles form submission and potential page transitions
+   */
+  async clickResetPassword(): Promise<void> {
+    await this.resetPasswordButton.click();
+    await this.waitForNetworkIdle();
+  }
+
+  /**
+   * Clicks the cancel button and waits for modal to close or page navigation
+   * Returns user to the previous state (usually login page)
+   */
+  async clickCancel(): Promise<void> {
+    await this.cancelButton.click();
+    await this.waitForNetworkIdle();
+  }
 }

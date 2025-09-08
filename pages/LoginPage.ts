@@ -15,16 +15,16 @@ export class LoginPage extends BasePage {
     super(page);
     this.username = this.page.getByPlaceholder("Username");
     this.password = this.page.getByPlaceholder("Password");
-    this.loginButton = this.getButton("Login");
+    this.loginButton = this.page.getByRole("button", { name: "Login" });
     this.errorMessage = this.page.locator("text=/invalid.*credentials/i");
-    this.forgotPasswordLink = this.getText("Forgot your password?");
+    this.forgotPasswordLink = this.page.getByText("Forgot your password?");
     this.usernameRequiredMessage = this.page.locator(
       '//input[@name="username"]/../../span'
     );
     this.passwordRequiredMessage = this.page.locator(
       '//input[@name="password"]/../../span'
     );
-    this.singleRequiredMessage = this.getText("Required");
+    this.singleRequiredMessage = this.page.getByText("Required");
   }
 
   async goto(): Promise<void> {

@@ -1,4 +1,4 @@
-import { test, expect } from "./fixtures";
+import { test, expect, TEST_USERS } from "./fixtures";
 
 const NEGATIVE_LOGIN_SCENARIOS = [
   {
@@ -20,13 +20,13 @@ const VALIDATION_SCENARIOS = [
     testId: "TC_LOGIN_005",
     description: "Empty Username",
     fixture: "emptyUsernameUser",
-    expectedMessage: "singleRequiredMessage"
+    expectedMessage: "Required"
   },
   {
     testId: "TC_LOGIN_006",
     description: "Empty Password",
     fixture: "emptyPasswordUser",
-    expectedMessage: "singleRequiredMessage"
+    expectedMessage: "Required"
   }
 ];
 
@@ -56,9 +56,10 @@ test.describe(
       {
         tag: ["@smoke"]
       },
-      async ({ loginPage, dashboardPage, validUser }) => {
+      async ({ loginPage, dashboardPage, users }) => {
+        const user = users.VALID;
         await loginPage.goto();
-        await loginPage.login(validUser.username, validUser.password);
+        await loginPage.login(user.username, user.password);
 
         await expect(loginPage.page).toHaveURL(/dashboard/, { timeout: 10000 });
         await expect(dashboardPage.dashboardHeading).toBeVisible();
@@ -66,45 +67,45 @@ test.describe(
     );
 
     test.describe(
-      "Invalid Credentials Tests",
+      "Invalid Tests",
       {
         tag: ["@negative"]
       },
       () => {
-        NEGATIVE_LOGIN_SCENARIOS.forEach(
-          ({ testId, description, fixture, expectedError }) => {
-            if (fixture === "invalidUser") {
-              test(
-                `${testId}: ${description}, "${expectedError}" is displayed`,
-                {
-                  tag: ["@negative"]
-                },
-                async ({ loginPage, invalidUser }) => {
-                  await loginPage.goto();
-                  await loginPage.login(invalidUser.username, invalidUser.password);
+        for (const { testId, description, fixture, expectedError } of [
+          ...NEGATIVE_LOGIN_SCENARIOS,
+          ...SECURITY_SCENARIOS
+        ]) {
+          test(
+            `${testId}: ${description}, "${expectedError}" is displayed`,
+            {
+              tag: ["@negative"]
+            },
+            async ({ loginPage, users }) => {
+              let user;
+              switch (fixture) {
+                case "invalidUser":
+                  user = users.INVALID;
+                  break;
+                case "invalidPasswordUser":
+                  user = users.INVALID_PASSWORD;
+                  break;
+                case "sqlInjectionUser":
+                  user = users.SQL_INJECTION;
+                  break;
+                case "xssAttackUser":
+                  user = users.XSS_ATTACK;
+                  break;
+                default:
+                  throw new Error("No such user defined in the fixture");
+              }
+              await loginPage.goto();
+              await loginPage.login(user.username, user.password);
 
-                  await expect(loginPage.errorMessage).toBeVisible({ timeout: 5000 });
-                }
-              );
-            } else if (fixture === "invalidPasswordUser") {
-              test(
-                `${testId}: ${description}, "${expectedError}" is displayed`,
-                {
-                  tag: ["@negative"]
-                },
-                async ({ loginPage, invalidPasswordUser }) => {
-                  await loginPage.goto();
-                  await loginPage.login(
-                    invalidPasswordUser.username,
-                    invalidPasswordUser.password
-                  );
-
-                  await expect(loginPage.errorMessage).toBeVisible({ timeout: 5000 });
-                }
-              );
+              await expect(loginPage.errorMessage).toBeVisible({ timeout: 5000 });
             }
-          }
-        );
+          );
+        }
       }
     );
 
@@ -131,56 +132,65 @@ test.describe(
         tag: ["@validation"]
       },
       () => {
-        VALIDATION_SCENARIOS.forEach(
-          ({ testId, description, fixture, expectedMessage }) => {
-            if (fixture === "emptyUsernameUser") {
-              test(
-                `${testId}: ${description}, "Required" validation message appears`,
-                {
-                  tag: ["@validation"]
-                },
-                async ({ loginPage, emptyUsernameUser }) => {
-                  await loginPage.goto();
-                  await loginPage.login(
-                    emptyUsernameUser.username,
-                    emptyUsernameUser.password
-                  );
+        for (const {
+          testId,
+          description,
+          fixture,
+          expectedMessage
+        } of VALIDATION_SCENARIOS) {
+          test(
+            `${testId}: ${description}, "${expectedMessage}" validation message appears`,
+            {
+              tag: ["@validation"]
+            },
+            async ({ loginPage, users }) => {
+              let user;
+              switch (fixture) {
+                case "emptyUsernameUser":
+                  user = users.EMPTY_USERNAME;
+                  break;
+                case "emptyPasswordUser":
+                  user = users.EMPTY_PASSWORD;
+                  break;
+                case "emptyBothUser":
+                  user = users.EMPTY_BOTH;
+                  break;
+                default:
+                  throw new Error("No such user defined in the fixture");
+              }
 
-                  await expect(loginPage.singleRequiredMessage).toBeVisible({
-                    timeout: 5000
-                  });
-                }
-              );
-            } else if (fixture === "emptyPasswordUser") {
-              test(
-                `${testId}: ${description}, "Required" validation message appears`,
-                {
-                  tag: ["@validation"]
-                },
-                async ({ loginPage, emptyPasswordUser }) => {
-                  await loginPage.goto();
-                  await loginPage.login(
-                    emptyPasswordUser.username,
-                    emptyPasswordUser.password
-                  );
+              if (user.username && user.password) {
+                throw new Error(
+                  "Wrong test data, at least one property should be empty."
+                );
+              }
 
-                  await expect(loginPage.singleRequiredMessage).toBeVisible({
-                    timeout: 5000
-                  });
-                }
-              );
+              await loginPage.goto();
+              await loginPage.login(user.username, user.password);
+
+              if (!user.username) {
+                await expect(loginPage.usernameRequiredMessage).toBeVisible({
+                  timeout: 5000
+                });
+              }
+              if (!user.password) {
+                await expect(loginPage.passwordRequiredMessage).toBeVisible({
+                  timeout: 5000
+                });
+              }
             }
-          }
-        );
+          );
+        }
 
         test(
           'TC_LOGIN_007: Both Fields Empty, "Required" validation messages appear',
           {
             tag: ["@validation"]
           },
-          async ({ loginPage, emptyBothUser }) => {
+          async ({ loginPage, users }) => {
+            const user = users.EMPTY_BOTH;
             await loginPage.goto();
-            await loginPage.login(emptyBothUser.username, emptyBothUser.password);
+            await loginPage.login(user.username, user.password);
 
             await expect(loginPage.usernameRequiredMessage).toBeVisible({
               timeout: 5000
@@ -188,49 +198,6 @@ test.describe(
             await expect(loginPage.passwordRequiredMessage).toBeVisible({
               timeout: 5000
             });
-          }
-        );
-      }
-    );
-
-    test.describe(
-      "Security Tests",
-      {
-        tag: ["@security"]
-      },
-      () => {
-        SECURITY_SCENARIOS.forEach(
-          ({ testId, description, fixture, expectedError }) => {
-            if (fixture === "sqlInjectionUser") {
-              test(
-                `${testId}: ${description}, login fails with "${expectedError}"`,
-                {
-                  tag: ["@security"]
-                },
-                async ({ loginPage, sqlInjectionUser }) => {
-                  await loginPage.goto();
-                  await loginPage.login(
-                    sqlInjectionUser.username,
-                    sqlInjectionUser.password
-                  );
-
-                  await expect(loginPage.errorMessage).toBeVisible({ timeout: 5000 });
-                }
-              );
-            } else if (fixture === "xssAttackUser") {
-              test(
-                `${testId}: ${description}, login fails with "${expectedError}"`,
-                {
-                  tag: ["@security"]
-                },
-                async ({ loginPage, xssAttackUser }) => {
-                  await loginPage.goto();
-                  await loginPage.login(xssAttackUser.username, xssAttackUser.password);
-
-                  await expect(loginPage.errorMessage).toBeVisible({ timeout: 5000 });
-                }
-              );
-            }
           }
         );
       }

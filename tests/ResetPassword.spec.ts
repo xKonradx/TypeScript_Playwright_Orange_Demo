@@ -11,10 +11,11 @@ test.describe(
       {
         tag: ["@smoke"]
       },
-      async ({ loginPage, forgotPasswordPage, validUser }) => {
+      async ({ loginPage, forgotPasswordPage, users }) => {
+        const user = users.VALID;
         await loginPage.goto();
         await loginPage.clickForgotPassword();
-        await forgotPasswordPage.fillUsername(validUser.username);
+        await forgotPasswordPage.fillUsername(user.username);
         await forgotPasswordPage.clickResetPassword();
 
         await expect(forgotPasswordPage.successMessage).toBeVisible({ timeout: 10000 });

@@ -1,4 +1,5 @@
 import playwright from "eslint-plugin-playwright";
+import eslintPluginUnicorn from "eslint-plugin-unicorn";
 
 export default [
   eslintPluginUnicorn.configs.recommended,

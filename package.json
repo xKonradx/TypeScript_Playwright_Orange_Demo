@@ -9,11 +9,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "devDependencies": {
     "@playwright/test": "^1.54.1",
     "@types/node": "^24.1.0",
     "eslint": "^9.32.0",
+    "eslint-plugin-playwright": "^2.2.2",
     "eslint-plugin-unicorn": "^60.0.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",

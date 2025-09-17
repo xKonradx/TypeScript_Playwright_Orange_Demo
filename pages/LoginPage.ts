@@ -13,22 +13,22 @@ export class LoginPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.username = this.page.getByPlaceholder("Username");
-    this.password = this.page.getByPlaceholder("Password");
-    this.loginButton = this.page.getByRole("button", { name: "Login" });
-    this.errorMessage = this.page.locator("text=/invalid.*credentials/i");
-    this.forgotPasswordLink = this.page.getByText("Forgot your password?");
+    this.username = this.getTextInput("Username");
+    this.password = this.getPasswordInput("Password");
+    this.loginButton = this.getButton("Login");
+    this.errorMessage = this.getText(/invalid.*credentials/i);
+    this.forgotPasswordLink = this.getText("Forgot your password?");
     this.usernameRequiredMessage = this.page.locator(
       '//input[@name="username"]/../../span'
     );
     this.passwordRequiredMessage = this.page.locator(
       '//input[@name="password"]/../../span'
     );
-    this.singleRequiredMessage = this.page.getByText("Required");
+    this.singleRequiredMessage = this.getText("Required");
   }
 
   async goto(): Promise<void> {
-    await this.navigateToPath(this.PATHS.LOGIN);
+    await this.page.goto(this.PATHS.LOGIN);
   }
 
   async login(user: string, pass: string): Promise<void> {

@@ -6,8 +6,6 @@ export class TimePage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.pageHeading = this.page
-      .locator(".oxd-topbar-header-breadcrumb-module")
-      .getByText("Time");
+    this.pageHeading = this.getBreadcrumbText("Time");
   }
 }

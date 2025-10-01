@@ -6,8 +6,6 @@ export class DirectoryPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.pageHeading = this.page
-      .locator(".oxd-topbar-header-breadcrumb-module")
-      .getByText("Directory");
+    this.pageHeading = this.getBreadcrumbText("Directory");
   }
 }

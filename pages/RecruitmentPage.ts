@@ -6,8 +6,6 @@ export class RecruitmentPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.pageHeading = this.page
-      .locator(".oxd-topbar-header-breadcrumb-module")
-      .getByText("Recruitment");
+    this.pageHeading = this.getBreadcrumbText("Recruitment");
   }
 }

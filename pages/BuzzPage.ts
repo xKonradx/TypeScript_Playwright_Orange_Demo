@@ -6,8 +6,6 @@ export class BuzzPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.pageHeading = this.page
-      .locator(".oxd-topbar-header-breadcrumb-module")
-      .getByText("Buzz");
+    this.pageHeading = this.getBreadcrumbText("Buzz");
   }
 }

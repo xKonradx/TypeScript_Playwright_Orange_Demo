@@ -6,8 +6,6 @@ export class PerformancePage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.pageHeading = this.page
-      .locator(".oxd-topbar-header-breadcrumb-module")
-      .getByText("Performance");
+    this.pageHeading = this.getBreadcrumbText("Performance");
   }
 }
